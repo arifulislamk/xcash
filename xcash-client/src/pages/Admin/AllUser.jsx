@@ -22,16 +22,18 @@ const AllUser = () => {
         <table className="table">
           {/* head */}
           <thead>
-            <tr>
-              <th>Name</th>
-              <th>UserType</th>
+            <tr className=" bg-gray-400 ">
+              <th className="font-bold text-xl">Name</th>
+              <th className=" text-xl font-bold">UserType</th>
+              <th className=" text-xl font-bold">Update Role</th>
             </tr>
           </thead>
           <tbody>
             {alluser.data?.map((user,inx) => (
                 <tr key={inx}>
-                <th>{user.name}</th>
-                <td>{user.userType}</td>
+                <th className=" text-xl font-bold">{user.name}</th>
+                <td className=" text-xl">{user.userType}</td>
+                <td><button className="btn">Update Role</button></td>
               </tr>
             ))}
            
