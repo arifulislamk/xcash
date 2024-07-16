@@ -1,6 +1,7 @@
 const UserMenu = () => {
   return (
     <div>
+      <h2 className=" text-xl font-medium p-3">Welcome , </h2>
       <div className=" text-center grid grid-cols-2 justify-center items-center gap-5 p-4">
         <div className="bg-yellow-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
           <h4 className=" font-bold text-white text-xl p-3">Send Money</h4>
@@ -18,6 +19,8 @@ const UserMenu = () => {
           <h4 className=" font-bold text-green-500 text-xl p-3">Balance</h4>
         </div>
       </div>
+      
+      
     </div>
   );
 };

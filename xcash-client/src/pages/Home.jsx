@@ -5,6 +5,9 @@ import AgentMenu from "../components/Agent/AgentMenu";
 import AdminMenu from "../components/Admin/AdminMenu";
 
 const Home = () => {
+    const reloadPage = () => {
+        window.location.reload();
+      };
   const [user, setuser] = useState({});
   useEffect(() => {
     const name = localStorage.getItem("name");
@@ -16,14 +19,22 @@ const Home = () => {
     setuser(info);
     console.log(info);
   }, []);
-  
-  console.log(user)
+
+  const logout = () => {
+    localStorage.clear()
+    reloadPage()
+  }
+
+  console.log(user);
   return (
     <div>
-      { user.userType === 'user' ? <UserMenu /> : <Login />}
-      { user.userType === 'agent' && <AgentMenu /> }
-      { user.userType === 'admin' && <AdminMenu />  }
-      
+      {user.userType === "user" ? <UserMenu /> : <Login />}
+      {user.userType === "agent" && <AgentMenu />}
+      {user.userType === "admin" && <AdminMenu />}
+
+      { user.userType && <div className=" flex justify-center">
+        <button onClick={logout} className="btn  text-xl font-bold text-center">Logout</button>
+      </div>}
     </div>
   );
 };

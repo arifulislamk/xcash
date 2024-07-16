@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import useCommonAxios from "../hooks/useCommonAxios";
+import { useQuery } from "@tanstack/react-query";
 
 const Login = () => {
   const commonAxios = useCommonAxios();
+  const reloadPage = () => {
+    window.location.reload();
+  };
   
   // Save to localStorage
   const saveToLocalStorage = (name, pin, number, email, userType) => {
@@ -13,15 +17,24 @@ const Login = () => {
     localStorage.setItem("number", number);
   };
 
+  const { data: alluser =[], refetch } = useQuery({
+    queryKey: "allUsers",
+    queryFn: async () => {
+      return commonAxios("/allusers");
+    },
+    onSuccess: () => {
+      console.log(' Succesful')
+    },
+  })
+  console.log(alluser)
   const login = async (e) => {
     e.preventDefault();
     const emailornumber = e.target.emailornumber.value;
     const pin = e.target.pin.value;
     console.log(emailornumber, pin);
     try {
-      commonAxios("/allusers").then((res) => {
-        {
-          const userinfo = res.data.filter(
+    {
+          const userinfo = alluser.data.filter(
             (user) =>
               (user.pin === pin && user.email === emailornumber) ||
               (user.pin === pin && user.number === emailornumber)
@@ -37,10 +50,12 @@ const Login = () => {
             );
           }
         }
-      });
+        reloadPage()
     } catch (err) {
       console.log(err.message);
     }
+
+    refetch()
   };
   return (
     <div>
