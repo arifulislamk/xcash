@@ -7,6 +7,8 @@ const Login = () => {
     const emailornumber = e.target.emailornumber.value ;
     const pin = e.target.pin.value ;
     console.log(emailornumber ,pin)
+
+    
   };
   return (
     <div>
