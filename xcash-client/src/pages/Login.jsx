@@ -17,7 +17,7 @@ const Login = () => {
     localStorage.setItem("number", number);
   };
 
-  const { data: alluser =[], refetch } = useQuery({
+  const { data: alluser =[] } = useQuery({
     queryKey: "allUsers",
     queryFn: async () => {
       return commonAxios("/allusers");

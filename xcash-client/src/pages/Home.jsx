@@ -28,9 +28,12 @@ const Home = () => {
   console.log(user);
   return (
     <div>
-      {user.userType === "user" ? <UserMenu /> : <Login />}
+      {user.userType === "user" && <UserMenu /> }
       {user.userType === "agent" && <AgentMenu />}
-      {user.userType === "admin" && <AdminMenu />}
+      {user.userType === "admin" &&  <AdminMenu /> }
+      {
+        user.userType === "user" || user.userType === "agent" || user.userType === "admin" ? '': <Login />
+      }
 
       { user.userType && <div className=" flex justify-center">
         <button onClick={logout} className="btn  text-xl font-bold text-center">Logout</button>
