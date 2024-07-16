@@ -1,14 +1,24 @@
 import { Link } from "react-router-dom";
+import useCommonAxios from "../hooks/useCommonAxios";
 
 const Registration = () => {
-  const register = (e) => {
+  const commonAxios = useCommonAxios();
+
+  const register = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
     const pin = form.pin.value;
     const number = form.number.value;
-    console.table(name, email, pin, number);
+    const info = { name, email, pin, number };
+    console.log(info);
+    try {
+      const response = await commonAxios.post("/adduser", info);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div>
