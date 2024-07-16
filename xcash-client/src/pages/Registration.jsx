@@ -1,23 +1,60 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useCommonAxios from "../hooks/useCommonAxios";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 const Registration = () => {
   const commonAxios = useCommonAxios();
+  const navigate = useNavigate()
+  const [name, setName] = useState('');
 
-  const register = async (e) => {
+  // Load saved name from localStorage when component mounts
+  useEffect(() => {
+    const savedName = localStorage.getItem('name');
+    if (savedName) {
+      setName(savedName);
+    }
+  }, []);
+
+  // Save name to localStorage when the button is clicked
+  const saveToLocalStorage = (name, pin, number,email , userType) => {
+    localStorage.setItem('name', name);
+    localStorage.setItem('email', email);
+    localStorage.setItem('pin', pin);
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('number', number);
+  };
+
+  const { mutateAsync } = useMutation({
+    mutationFn: async (info) => {
+      const { data } = await commonAxios.post("/adduser", info);
+      return data;
+    },
+    onSuccess: () => {
+      console.log('User Create Succesful')
+      toast.success('User Create Succesful')
+      navigate('/')
+    },
+  });
+
+  const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
     const pin = form.pin.value;
     const number = form.number.value;
-    const info = { name, email, pin, number };
-    console.log(info);
+    const userType = 'user' ;
+    // console.log(info);
     try {
-      const response = await commonAxios.post("/adduser", info);
-      console.log(response);
-    } catch (error) {
-      console.error(error);
+      const info = {name, pin, number,email , userType};
+      mutateAsync(info);
+      saveToLocalStorage(name, pin, number,email , userType)
+    } catch (err) {
+      console.log(err);
+
+      toast.error(err.message);
     }
   };
   return (
@@ -28,7 +65,7 @@ const Registration = () => {
             <h1 className="text-3xl font-bold">Registration Now</h1>
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-            <form onSubmit={register} className="card-body">
+            <form onSubmit={handleRegister} className="card-body">
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Name</span>
