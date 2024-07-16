@@ -25,7 +25,7 @@ const AllUser = () => {
             <tr className=" bg-gray-400 ">
               <th className="font-bold text-xl">Name</th>
               <th className=" text-xl font-bold">UserType</th>
-              <th className=" text-xl font-bold">Update Role</th>
+              <th className=" text-xl font-bold">Confirm/update Role</th>
             </tr>
           </thead>
           <tbody>

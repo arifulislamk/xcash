@@ -45,12 +45,13 @@ const Registration = () => {
     const email = form.email.value;
     const pin = form.pin.value;
     const number = form.number.value;
-    const userType = 'user' ;
+    const status = 'pending';
+    const userType = 'pending' ;
     // console.log(info);
     try {
       const info = {name, pin, number,email , userType};
       mutateAsync(info);
-      saveToLocalStorage(name, pin, number,email , userType)
+      saveToLocalStorage(name, pin, number,email , userType, status)
     } catch (err) {
       console.log(err);
 
