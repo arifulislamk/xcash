@@ -17,7 +17,7 @@ const Registration = () => {
     }
   }, []);
 
-  // Save name to localStorage when the button is clicked
+  // Save to localStorage 
   const saveToLocalStorage = (name, pin, number,email , userType) => {
     localStorage.setItem('name', name);
     localStorage.setItem('email', email);

@@ -1,14 +1,46 @@
 import { Link } from "react-router-dom";
+import useCommonAxios from "../hooks/useCommonAxios";
 
 const Login = () => {
+  const commonAxios = useCommonAxios();
+  
+  // Save to localStorage
+  const saveToLocalStorage = (name, pin, number, email, userType) => {
+    localStorage.setItem("name", name);
+    localStorage.setItem("email", email);
+    localStorage.setItem("pin", pin);
+    localStorage.setItem("userType", userType);
+    localStorage.setItem("number", number);
+  };
 
-  const login = (e) => {
-    e.preventDefault()
-    const emailornumber = e.target.emailornumber.value ;
-    const pin = e.target.pin.value ;
-    console.log(emailornumber ,pin)
-
-    
+  const login = async (e) => {
+    e.preventDefault();
+    const emailornumber = e.target.emailornumber.value;
+    const pin = e.target.pin.value;
+    console.log(emailornumber, pin);
+    try {
+      commonAxios("/allusers").then((res) => {
+        {
+          const userinfo = res.data.filter(
+            (user) =>
+              (user.pin === pin && user.email === emailornumber) ||
+              (user.pin === pin && user.number === emailornumber)
+          );
+          console.log(userinfo);
+          if (userinfo) {
+            saveToLocalStorage(
+              userinfo[0].name,
+              userinfo[0].pin,
+              userinfo[0].number,
+              userinfo[0].email,
+              userinfo[0].userType
+            );
+          }
+        }
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
   };
   return (
     <div>
