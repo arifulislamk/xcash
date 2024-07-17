@@ -28,12 +28,14 @@ const AllUser = () => {
   // modal handle
   const modalHandler = async (selected) => {
     console.log("user role updated", selected);
-    const updatedRole = {
+    let updatedRole = {
       userType: selected,
       status: "Verified",
+      balance: 40 ,
     };
 
-    // console.log(updatedRole);
+    if(selected === 'agent') updatedRole.balance = 10000 ;
+    console.log(updatedRole);
     try {
       const { data } = await commonAxios
         .patch(`/alluser/${email}`, updatedRole)
@@ -79,7 +81,7 @@ const AllUser = () => {
                       aria-hidden="true"
                       className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
                     ></span>
-                    <span className="relative">Update Role</span>
+                    <span className="relative">Confirm</span>
                   </button>
                   {/* Update User Modal */}
                   <UpdateUserModal
