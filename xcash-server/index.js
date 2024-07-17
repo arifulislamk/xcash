@@ -60,14 +60,16 @@ async function run() {
 
     // sendmoney by user
     app.patch("/transfer/:number", async (req, res) => {
+      const userType = "user";
       const number = req.params.number;
-      const query = { number };
+      const query = { number , userType};
       const amount = parseFloat(req.body.amount);
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
 
         if (!user) {
+          console.log('No user')
           return res.status(404).send({ message: "User not found" });
         }
         // Calculate the new balance
@@ -86,6 +88,7 @@ async function run() {
         res.status(500).send({ message: "Internal server error" });
       }
     });
+    // sendmoney and minus balance 
     app.patch("/minus/:number", async (req, res) => {
       const number = req.params.number;
       const query = { number };
@@ -106,7 +109,7 @@ async function run() {
           },
         };
         const result = await allUserData.updateOne(query, updateDoc);
-
+        
         res.send(result);
       } catch (error) {
         console.error(error);

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import useCommonAxios from "../../hooks/useCommonAxios";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const UserMenu = () => {
   const email = localStorage.getItem("email");
@@ -24,20 +25,28 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const amount = e.target.amount.value;
     const pin = e.target.pin.value;
-
-    console.log(number, amount, pin);
-    if (amount <= userinfo?.balance) {
-      const { data } = await commonAxios.patch(`/transfer/${number}` ,{amount: amount});
+    console.log(number, amount, pin );
+    if (amount <= userinfo?.balance && pin === userinfo?.pin ) {
+      const { data } = await commonAxios.patch(`/transfer/${number}`, {
+        amount: amount,
+      });
       console.log(data);
-      if(data.modifiedCount){
-        alert("Money sent successfully");
-       const { data } = await commonAxios.patch(`/minus/${userinfo?.number}` ,{amount: amount}); 
-       console.log(data);
+      if (data.modifiedCount) {
+        toast.success("Money sent successfully");
+        const { data } = await commonAxios.patch(`/minus/${userinfo?.number}`, {
+          amount: amount,
+        });
+        console.log(data);
         setsendmoney(false);
       }
       window.location.reload();
     } else {
-      alert("Insufficient balance");
+      if (amount > userinfo?.balance) {
+        toast.error("Insufficient balance ");
+      }
+      if(pin !== userinfo?.pin){
+        toast.error("pin not matching ");
+      }
     }
   };
   if (isLoading) return <p>loadingg</p>;

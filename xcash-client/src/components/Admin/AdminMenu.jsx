@@ -20,7 +20,7 @@ const AdminMenu = () => {
     <div>
       <div className=" p-4">
         <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
-        <div className=" flex">
+        <div className=" flex justify-between ">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>
           <p className="font-medium">Role: Admin</p>
         </div>
