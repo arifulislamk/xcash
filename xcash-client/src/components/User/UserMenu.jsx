@@ -7,6 +7,9 @@ import { toast } from "react-toastify";
 const UserMenu = () => {
   const email = localStorage.getItem("email");
   const [sendmoney, setsendmoney] = useState(false);
+  const [cashOut, setcashOut] = useState(false);
+  const [cashIn, setcashIn] = useState(false);
+  const [ TransectionHistory, setTransectionHistory] = useState(false);
   // console.log(email)
   const commonAxios = useCommonAxios();
 
@@ -25,8 +28,8 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const amount = e.target.amount.value;
     const pin = e.target.pin.value;
-    console.log(number, amount, pin );
-    if (amount <= userinfo?.balance && pin === userinfo?.pin ) {
+    console.log(number, amount, pin);
+    if (amount <= userinfo?.balance && pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/transfer/${number}`, {
         amount: amount,
       });
@@ -44,7 +47,7 @@ const UserMenu = () => {
       if (amount > userinfo?.balance) {
         toast.error("Insufficient balance ");
       }
-      if(pin !== userinfo?.pin){
+      if (pin !== userinfo?.pin) {
         toast.error("pin not matching ");
       }
     }
@@ -63,7 +66,8 @@ const UserMenu = () => {
           <p>Balance: {userinfo?.balance}</p>
         </div>
       </div>
-      {sendmoney ? (
+      {/* sendmoney ul  */}
+      {sendmoney && (
         <div>
           <div className=" p-3">
             <button
@@ -73,6 +77,7 @@ const UserMenu = () => {
               back
             </button>
           </div>
+          <h2 className=" text-center font-bold text-xl ">Send Money</h2>
           <div className=" flex flex-col justify-center items-center ">
             <form
               onSubmit={handleSendMoney}
@@ -109,27 +114,150 @@ const UserMenu = () => {
             </form>
           </div>
         </div>
-      ) : (
+      )}
+
+      {/* Cashout Ui  */}
+      {cashOut && (
+        <div>
+          <div className=" p-3">
+            <button
+              onClick={() => setcashOut(!cashOut)}
+              className="btn text-left"
+            >
+              back
+            </button>
+          </div>
+          <h2 className=" text-center font-bold text-xl ">Cash Out</h2>
+          <div className=" flex flex-col justify-center items-center ">
+            <form
+              onSubmit={handleSendMoney}
+              className="space-y-5 mt-4"
+              action=""
+            >
+              <div>
+                <input
+                  name="number"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="Agent number"
+                  type="number"
+                />
+              </div>
+              <div>
+                <input
+                  type="number"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="amount"
+                  name="amount"
+                />
+              </div>
+              <div>
+                <input
+                  name="pin"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="Pin"
+                  type="number"
+                />
+              </div>
+              <div className="form-control mt-6">
+                <button className="btn bg-green-400">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CashIn Ui  */}
+      {cashIn && (
+        <div>
+          <div className=" p-3">
+            <button
+              onClick={() => setcashIn(!cashIn)}
+              className="btn text-left"
+            >
+              back
+            </button>
+          </div>
+          <h2 className=" text-center font-bold text-xl ">Cash In</h2>
+          <div className=" flex flex-col justify-center items-center ">
+            <form
+              onSubmit={handleSendMoney}
+              className="space-y-5 mt-4"
+              action=""
+            >
+              <div>
+                <input
+                  name="number"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="Agent number"
+                  type="number"
+                />
+              </div>
+              <div>
+                <input
+                  type="number"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="amount"
+                  name="amount"
+                />
+              </div>
+              <div>
+                <input
+                  name="pin"
+                  className="border border-gray-400 p-3 rounded-md"
+                  placeholder="Pin"
+                  type="number"
+                />
+              </div>
+              <div className="form-control mt-6">
+                <button className="btn bg-green-400">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* CashIn Ui  */}
+      {TransectionHistory && (
+        <div>
+          <div className=" p-3">
+            <button
+              onClick={() => setTransectionHistory(!TransectionHistory)}
+              className="btn text-left"
+            >
+              back
+            </button>
+          </div>
+          <h2 className=" text-center font-bold text-xl ">Transection History</h2>
+          <div className=" flex flex-col justify-center items-center ">
+            
+          </div>
+        </div>
+      )}
+
+      {!sendmoney && !cashOut && !cashIn && !TransectionHistory && (
         <div className=" text-center grid grid-cols-2 justify-center items-center gap-5 p-4">
           <Link onClick={() => setsendmoney(!sendmoney)}>
             <div className="bg-yellow-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
               <h4 className=" font-bold text-white text-xl p-3">Send Money</h4>
             </div>
           </Link>
-          <div className=" border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 bg-red-400">
-            <h4 className=" font-bold text-white text-xl p-3">Cash Out</h4>
-          </div>
-          <div className=" border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 bg-green-400">
-            <h4 className=" font-bold text-white text-xl p-3">Cash In</h4>
-          </div>
-          <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
-            <h4 className=" font-bold text-white text-xl p-3">
-              Transaction History
-            </h4>
-          </div>
-          <div className="bg-gray-300 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
-            <h4 className=" font-bold text-green-500 text-xl p-3">Balance</h4>
-          </div>
+          <Link onClick={() => setcashOut(!cashOut)}>
+            <div className=" border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 bg-red-400">
+              <h4 className=" font-bold text-white text-xl p-3">Cash Out</h4>
+            </div>
+          </Link>
+          <Link onClick={() => setcashIn(!cashIn)}>
+            <div className=" border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 bg-green-400">
+              <h4 className=" font-bold text-white text-xl p-3">Cash In</h4>
+            </div>
+          </Link>
+
+          <Link  onClick={() => setTransectionHistory(!TransectionHistory)}>
+            <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
+              <h4 className=" font-bold text-white text-xl p-3">
+                Transaction History
+              </h4>
+            </div>
+          </Link>
         </div>
       )}
 
