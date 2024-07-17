@@ -1,17 +1,28 @@
 
-import useFilter from "../../hooks/useFilter";
+import { useQuery } from "@tanstack/react-query";
+import useCommonAxios from "../../hooks/useCommonAxios";
 
 const UserMenu = () => {
-  const [userinfo] = useFilter()
-  if(!userinfo) return <p>lodddddd</p>
+  const email = localStorage.getItem('email')
+  // console.log(email)
+  const commonAxios= useCommonAxios() ;
 
+  const {data: userinfo , isLoading} = useQuery({
+    queryKey: ['userInfo', !!email],
+    queryFn: async () => {
+      const { data } = await commonAxios(`/user/${email}`);
+      return data;
+    }
+  })
+  // console.log(userinfo)
+  if(isLoading)return <p>loadingg</p>
   return (
     <div>
       <div className=" p-4">
-      <h2 className=" text-xl font-medium">Welcome , {userinfo[0]?.name} </h2>
+      <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
       <p className="font-medium">You are in User Role</p>
       <div className=" flex justify-between">
-      <p>status : </p> <p>Balance: {userinfo[0]?.balance}</p> 
+      <p>status : {userinfo?.status} </p> <p>Balance: {userinfo?.balance}</p> 
       </div>
       </div>
       <div className=" text-center grid grid-cols-2 justify-center items-center gap-5 p-4">

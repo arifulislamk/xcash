@@ -6,24 +6,24 @@ import { useEffect, useState } from "react";
 
 const Registration = () => {
   const commonAxios = useCommonAxios();
-  const navigate = useNavigate()
-  const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
 
   // Load saved name from localStorage when component mounts
   useEffect(() => {
-    const savedName = localStorage.getItem('name');
+    const savedName = localStorage.getItem("name");
     if (savedName) {
       setName(savedName);
     }
   }, []);
 
-  // Save to localStorage 
-  const saveToLocalStorage = (name, pin, number,email , userType) => {
-    localStorage.setItem('name', name);
-    localStorage.setItem('email', email);
-    localStorage.setItem('pin', pin);
-    localStorage.setItem('userType', userType);
-    localStorage.setItem('number', number);
+  // Save to localStorage
+  const saveToLocalStorage = (name, pin, number, email, userType) => {
+    localStorage.setItem("name", name);
+    localStorage.setItem("email", email);
+    localStorage.setItem("pin", pin);
+    localStorage.setItem("userType", userType);
+    localStorage.setItem("number", number);
   };
 
   const { mutateAsync } = useMutation({
@@ -32,9 +32,9 @@ const Registration = () => {
       return data;
     },
     onSuccess: () => {
-      console.log('User Create Succesful')
-      toast.success('User Create Succesful')
-      navigate('/')
+      console.log("User Create Succesful");
+      toast.success("User Create Succesful");
+      navigate("/");
     },
   });
 
@@ -45,13 +45,14 @@ const Registration = () => {
     const email = form.email.value;
     const pin = form.pin.value;
     const number = form.number.value;
-    const status = 'pending';
-    const userType = 'pending' ;
-    // console.log(info);
+    const balance = 0;
+    const status = "requested";
+    const userType = form.selection.value ;
+    console.log( name, pin, number, email, userType);
     try {
-      const info = {name, pin, number,email , userType};
+      const info = { name, pin, number, email, userType ,status,balance };
       mutateAsync(info);
-      saveToLocalStorage(name, pin, number,email , userType, status)
+      saveToLocalStorage(name, pin, number, email, userType, status ,balance);
     } catch (err) {
       console.log(err);
 
@@ -103,6 +104,15 @@ const Registration = () => {
                   required
                 />
               </div>
+              <div>
+                <select name="selection" id="selection"   className="select select-info w-full max-w-xs">
+                  <option disabled selected>
+                    Select Role
+                  </option>
+                  <option>user</option>
+                  <option>agent</option>
+                </select>
+              </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">PIN</span>
@@ -120,7 +130,7 @@ const Registration = () => {
               </div>
               <p>
                 Already have an account?{" "}
-                <Link className=" text-blue-400" to="/login">
+                <Link className=" text-blue-400" to="/">
                   Login
                 </Link>
               </p>

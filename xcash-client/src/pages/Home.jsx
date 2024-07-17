@@ -18,7 +18,7 @@ const Home = () => {
     const userType = localStorage.getItem("userType");
     const info = { name, email, number, pin, userType };
     setuser(info);
-    console.log(info);
+    // console.log(info);
   }, []);
 
   const logout = () => {
@@ -26,7 +26,7 @@ const Home = () => {
     reloadPage()
   }
 
-  console.log(user);
+  // console.log(user);
   return (
     <div>
       {user.userType === "user" && <UserMenu /> }

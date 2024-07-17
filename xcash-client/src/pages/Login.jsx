@@ -23,15 +23,15 @@ const Login = () => {
       return commonAxios("/allusers");
     },
     onSuccess: () => {
-      console.log(' Succesful')
+      // console.log(' Succesful')
     },
   })
-  console.log(alluser)
+  // console.log(alluser)
   const login = async (e) => {
     e.preventDefault();
     const emailornumber = e.target.emailornumber.value;
     const pin = e.target.pin.value;
-    console.log(emailornumber, pin);
+    // console.log(emailornumber, pin);
     try {
     {
           const userinfo = alluser.data.filter(
