@@ -37,7 +37,7 @@ const Home = () => {
         user.userType === "user" || user.userType === "agent" || user.userType === "admin" || user.userType === "pending" ? '' : <Login />
       }
 
-      { user.userType && <div className=" flex justify-center">
+      { user.userType && <div className=" flex justify-center mt-6">
         <button onClick={logout} className="btn  text-xl font-bold text-center">Logout</button>
       </div>}
     </div>
