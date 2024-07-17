@@ -19,18 +19,22 @@ const UserMenu = () => {
   // console.log(userinfo)
 
   // sendmoney
-  const handleSendMoney =  async(e) => {
+  const handleSendMoney = async (e) => {
     e.preventDefault();
     const number = e.target.number.value;
     const amount = e.target.amount.value;
     const pin = e.target.pin.value;
 
-    console.log( number, amount,pin)
+    console.log(number, amount, pin);
     if (amount <= userinfo?.balance) {
-      const { data } = await commonAxios(
-        `/transfer/${email}/${number}/${amount}`
-      );
+      const { data } = await commonAxios.patch(`/transfer/${number}` ,{amount: amount});
       console.log(data);
+      if(data.modifiedCount){
+        alert("Money sent successfully");
+       const { data } = await commonAxios.patch(`/minus/${userinfo?.number}` ,{amount: amount}); 
+       console.log(data);
+        setsendmoney(false);
+      }
       window.location.reload();
     } else {
       alert("Insufficient balance");

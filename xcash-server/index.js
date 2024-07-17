@@ -42,7 +42,7 @@ async function run() {
       // console.log(email ,'d')
       const result = await allUserData.findOne({ email });
       res.send(result);
-    })
+    });
 
     // update user a role by admin
     app.patch("/alluser/:email", async (req, res) => {
@@ -56,6 +56,62 @@ async function run() {
       };
       const result = await allUserData.updateOne(query, updateDoc);
       res.send(result);
+    });
+
+    // sendmoney by user
+    app.patch("/transfer/:number", async (req, res) => {
+      const number = req.params.number;
+      const query = { number };
+      const amount = parseFloat(req.body.amount);
+      try {
+        // Retrieve the current user data
+        const user = await allUserData.findOne(query);
+
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        // Calculate the new balance
+        const newBalance = user.balance + amount;
+        // Update the user's balance
+        const updateDoc = {
+          $set: {
+            balance: newBalance,
+          },
+        };
+        const result = await allUserData.updateOne(query, updateDoc);
+
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
+    app.patch("/minus/:number", async (req, res) => {
+      const number = req.params.number;
+      const query = { number };
+      const amount = parseFloat(req.body.amount);
+      try {
+        // Retrieve the current user data
+        const user = await allUserData.findOne(query);
+
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        // Calculate the new balance
+        const newBalance = user.balance - amount;
+        // Update the user's balance
+        const updateDoc = {
+          $set: {
+            balance: newBalance,
+          },
+        };
+        const result = await allUserData.updateOne(query, updateDoc);
+
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+      }
     });
 
     // Send a ping to confirm a successful connection
