@@ -28,7 +28,7 @@ const Registration = () => {
 
   const { mutateAsync } = useMutation({
     mutationFn: async (info) => {
-      const { data } = await commonAxios.post("/adduser", info);
+      const { data } = await commonAxios.post("/register", info);
       return data;
     },
     onSuccess: () => {
@@ -52,7 +52,6 @@ const Registration = () => {
     try {
       const info = { name, pin, number, email, userType ,status,balance };
       mutateAsync(info);
-      saveToLocalStorage(name, pin, number, email, userType, status ,balance);
     } catch (err) {
       console.log(err);
 

@@ -1,10 +1,15 @@
 const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const cors = require("cors");
 require("dotenv").config();
+
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(
   cors({
@@ -17,6 +22,24 @@ app.use(
     optionSuccessStatus: 200,
   })
 );
+
+
+const authenticateJWT = (req, res, next) => {
+  const token = req.header('Authorization').split(' ')[1];
+  console.log(token , 'token pai');
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zwicj3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -37,18 +60,43 @@ async function run() {
     const allUserData = client.db("xcash").collection("allUser");
     const paymentHistory = client.db("xcash").collection("payments");
     // users collection
-    app.post("/adduser", async (req, res) => {
+    app.post("/register", async (req, res) => {
       const info = req.body;
-      const result = await allUserData.insertOne(info);
+      const hashedPassword = await bcrypt.hash(info.pin, 10);
+      const maininfo = { ...info, hashedPassword: hashedPassword };
+      const result = await allUserData.insertOne(maininfo);
       res.send(result);
     });
 
+    app.post("/login", async (req, res) => {
+      const { emailornumber, pin } = req.body;
+      const query = {
+        $or: [{ email: emailornumber }, { number : emailornumber }],
+      };
+      const user = await allUserData.findOne(query)
+      console.log(emailornumber, pin , user)
+      console.log(user, 'paichi');
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      const isPasswordValid = await bcrypt.compare(pin, user.hashedPassword);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      const token = jwt.sign({ emailornumber }, process.env.SECRET_KEY, { expiresIn: "365day" });
+      res.json({ token ,userType: user?.userType , email: user?.email });
+    });
+
+    app.get('/protected', authenticateJWT, (req, res) => {
+      res.json({ message: 'This is a protected route' });
+    });
+    
     app.get("/allusers", async (req, res) => {
       const result = await allUserData.find().toArray();
       res.send(result);
     });
 
-    app.get("/user/:email", async (req, res) => {
+    app.get("/user/:email",authenticateJWT, async (req, res) => {
       const email = req.params.email;
       // console.log(email ,'d')
       const result = await allUserData.findOne({ email });
@@ -208,13 +256,13 @@ async function run() {
       }
     });
 
-    // get all paymentHistory for admin 
+    // get all paymentHistory for admin
     app.get("/paymentHistory", async (req, res) => {
       const result = await paymentHistory.find().toArray();
       res.send(result);
     });
     // get paymentHistory by specifiq user
-    app.get("/paymentHistory/:number", async (req, res) => {
+    app.get("/paymentHistory/:number", authenticateJWT, async (req, res) => {
       const number = req.params.number;
       const query = {
         $or: [{ From: number }, { To: number }],

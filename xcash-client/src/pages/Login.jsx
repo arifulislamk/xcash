@@ -1,56 +1,29 @@
 import { Link } from "react-router-dom";
 import useCommonAxios from "../hooks/useCommonAxios";
-import { useQuery } from "@tanstack/react-query";
 
 const Login = () => {
   const commonAxios = useCommonAxios();
   const reloadPage = () => {
     window.location.reload();
   };
-  
-  // Save to localStorage
-  const saveToLocalStorage = (name, pin, number, email, userType) => {
-    localStorage.setItem("name", name);
-    localStorage.setItem("email", email);
-    localStorage.setItem("pin", pin);
-    localStorage.setItem("userType", userType);
-    localStorage.setItem("number", number);
-  };
 
-  const { data: alluser =[] } = useQuery({
-    queryKey: "allUsers",
-    queryFn: async () => {
-      return commonAxios("/allusers");
-    },
-    onSuccess: () => {
-      // console.log(' Succesful')
-    },
-  })
-  // console.log(alluser)
   const login = async (e) => {
     e.preventDefault();
     const emailornumber = e.target.emailornumber.value;
     const pin = e.target.pin.value;
-    // console.log(emailornumber, pin);
+    const userinfo = { emailornumber, pin };
     try {
-    {
-          const userinfo = alluser.data.filter(
-            (user) =>
-              (user.pin === pin && user.email === emailornumber) ||
-              (user.pin === pin && user.number === emailornumber)
-          );
-          console.log(userinfo);
-          if (userinfo) {
-            saveToLocalStorage(
-              userinfo[0].name,
-              userinfo[0].pin,
-              userinfo[0].number,
-              userinfo[0].email,
-              userinfo[0].userType
-            );
-          }
-        }
+      const { data } = await commonAxios.post("/login", userinfo);
+      console.log(data);
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userType", data.userType);
+        localStorage.setItem("email", data.email);
+        alert("Login successful");
         reloadPage()
+      } else {
+        alert(data.message);
+      }
     } catch (err) {
       console.log(err.message);
     }
