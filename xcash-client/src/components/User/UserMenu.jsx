@@ -9,7 +9,7 @@ const UserMenu = () => {
   const [sendmoney, setsendmoney] = useState(false);
   const [cashOut, setcashOut] = useState(false);
   const [cashIn, setcashIn] = useState(false);
-  const [ TransectionHistory, setTransectionHistory] = useState(false);
+  const [TransectionHistory, setTransectionHistory] = useState(false);
   // console.log(email)
   const commonAxios = useCommonAxios();
 
@@ -22,13 +22,14 @@ const UserMenu = () => {
   });
   // console.log(userinfo)
 
-  // sendmoney
+  // sendmoney handle
   const handleSendMoney = async (e) => {
     e.preventDefault();
     const number = e.target.number.value;
     const amount = e.target.amount.value;
     const pin = e.target.pin.value;
     console.log(number, amount, pin);
+
     if (amount <= userinfo?.balance && pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/transfer/${number}`, {
         amount: amount,
@@ -53,6 +54,41 @@ const UserMenu = () => {
       }
     }
   };
+
+  // cashOut handle
+  const handleCashOut = async (e) => {
+    e.preventDefault();
+    const amount = e.target.amount.value;
+    const number = e.target.number.value;
+    const pin = e.target.pin.value;
+
+    console.log(number, amount, pin);
+
+    if (amount <= userinfo?.balance && pin === userinfo?.pin) {
+      const { data } = await commonAxios.patch(`/cashouttransfer/${number}`, {
+        amount: amount,
+        userNumber: userinfo?.number,
+      });
+      console.log(data);
+      if (data.modifiedCount) {
+        toast.success("Cash Out successfully");
+        const { data } = await commonAxios.patch(`/cashoutminus/${userinfo?.number}`, {
+          amount: amount,
+        });
+        console.log(data);
+        setcashOut(false);
+      }
+      // window.location.reload();
+    } else {
+      if (amount > userinfo?.balance) {
+        toast.error("Insufficient balance ");
+      }
+      if (pin !== userinfo?.pin) {
+        toast.error("pin not matching ");
+      }
+    }
+  };
+
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
@@ -130,11 +166,7 @@ const UserMenu = () => {
           </div>
           <h2 className=" text-center font-bold text-xl ">Cash Out</h2>
           <div className=" flex flex-col justify-center items-center ">
-            <form
-              onSubmit={handleSendMoney}
-              className="space-y-5 mt-4"
-              action=""
-            >
+            <form onSubmit={handleCashOut} className="space-y-5 mt-4" action="">
               <div>
                 <input
                   name="number"
@@ -216,7 +248,7 @@ const UserMenu = () => {
           </div>
         </div>
       )}
-      {/* CashIn Ui  */}
+      {/* TransectionHistory  */}
       {TransectionHistory && (
         <div>
           <div className=" p-3">
@@ -227,10 +259,10 @@ const UserMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl ">Transection History</h2>
-          <div className=" flex flex-col justify-center items-center ">
-            
-          </div>
+          <h2 className=" text-center font-bold text-xl ">
+            Transection History
+          </h2>
+          <div className=" flex flex-col justify-center items-center "></div>
         </div>
       )}
 
@@ -252,7 +284,7 @@ const UserMenu = () => {
             </div>
           </Link>
 
-          <Link  onClick={() => setTransectionHistory(!TransectionHistory)}>
+          <Link onClick={() => setTransectionHistory(!TransectionHistory)}>
             <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 ">
               <h4 className=" font-bold text-white text-xl p-3">
                 Transaction History

@@ -128,6 +128,66 @@ async function run() {
       }
     });
 
+    // Cashout by user
+    app.patch("/cashouttransfer/:number", async (req, res) => {
+      const userType = "agent";
+      const number = req.params.number;
+      const query = { number, userType };
+      const amount = parseFloat(req.body.amount);
+      const userNumber = req.body.userNumber ;
+      try {
+        // Retrieve the current user data
+        const user = await allUserData.findOne(query);
+
+        if (!user) {
+          console.log("No user");
+          return res.status(404).send({ message: "User not found" });
+        }
+        // Calculate the new balance
+        const newBalance = user.balance + amount;
+        // Update the user's balance
+        const updateDoc = {
+          $set: {
+            balance: newBalance,
+          },
+        };
+        const result = await allUserData.updateOne(query, updateDoc);
+        const postpayments = await paymentHistory.insertOne({To: number ,amount: amount , From:userNumber , Type : 'Cashout' })
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
+    // cashout and minus balance
+    app.patch("/cashoutminus/:number", async (req, res) => {
+      const number = req.params.number;
+      const query = { number };
+      const amount = parseFloat(req.body.amount);
+      try {
+        // Retrieve the current user data
+        const user = await allUserData.findOne(query);
+
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        // Calculate the new balance
+        const newBalance = user.balance - amount;
+        // Update the user's balance
+        const updateDoc = {
+          $set: {
+            balance: newBalance,
+          },
+        };
+        const result = await allUserData.updateOne(query, updateDoc);
+
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
