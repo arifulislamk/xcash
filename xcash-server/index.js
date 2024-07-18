@@ -11,6 +11,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
+      "https://xcash.netlify.app",
     ],
     credentials: true,
     optionSuccessStatus: 200,
@@ -68,13 +69,14 @@ async function run() {
       res.send(result);
     });
 
-    // sendmoney by user
+    // sendmoney by user and add money another and history
     app.patch("/transfer/:number", async (req, res) => {
       const userType = "user";
       const number = req.params.number;
       const query = { number, userType };
-      const amount = parseFloat(req.body.amount);
-      const userNumber = req.body.userNumber ;
+      let amount = parseFloat(req.body.amount);
+      let fee = 0;
+      const userNumber = req.body.userNumber;
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
@@ -92,18 +94,26 @@ async function run() {
           },
         };
         const result = await allUserData.updateOne(query, updateDoc);
-        const postpayments = await paymentHistory.insertOne({To: number ,amount: amount , From:userNumber , Type : 'sendmoney' })
+
+        if (amount > 100) fee = 5;
+        const postpayments = await paymentHistory.insertOne({
+          To: number,
+          amount: amount,
+          fee: fee,
+          From: userNumber,
+          Type: "sendmoney",
+        });
         res.send(result);
       } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Internal server error" });
       }
     });
-    // sendmoney and minus balance
+    // sendmoney and minus balance from user
     app.patch("/minus/:number", async (req, res) => {
       const number = req.params.number;
       const query = { number };
-      const amount = parseFloat(req.body.amount);
+      let amount = parseFloat(req.body.amount);
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
@@ -111,6 +121,7 @@ async function run() {
         if (!user) {
           return res.status(404).send({ message: "User not found" });
         }
+        if (amount > 100) amount = amount + 5;
         // Calculate the new balance
         const newBalance = user.balance - amount;
         // Update the user's balance
@@ -128,13 +139,15 @@ async function run() {
       }
     });
 
-    // Cashout by user
+    // Cashout by user and add money to agent and history
     app.patch("/cashouttransfer/:number", async (req, res) => {
       const userType = "agent";
       const number = req.params.number;
       const query = { number, userType };
-      const amount = parseFloat(req.body.amount);
-      const userNumber = req.body.userNumber ;
+      const amount =
+        parseFloat(req.body.amount) + parseFloat(req.body.amount * (1.5 / 100));
+      const userNumber = req.body.userNumber;
+      console.log(parseFloat(req.body.amount * (1.5 / 100)));
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
@@ -152,18 +165,25 @@ async function run() {
           },
         };
         const result = await allUserData.updateOne(query, updateDoc);
-        const postpayments = await paymentHistory.insertOne({To: number ,amount: amount , From:userNumber , Type : 'Cashout' })
+        const postpayments = await paymentHistory.insertOne({
+          To: number,
+          amount: parseFloat(req.body.amount),
+          fee: parseFloat(req.body.amount * (1.5 / 100)),
+          From: userNumber,
+          Type: "Cashout",
+        });
         res.send(result);
       } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Internal server error" });
       }
     });
-    // cashout and minus balance
+    // cashout and minus from senders balance
     app.patch("/cashoutminus/:number", async (req, res) => {
       const number = req.params.number;
       const query = { number };
-      const amount = parseFloat(req.body.amount);
+      const amount =
+        parseFloat(req.body.amount) + parseFloat(req.body.amount * (1.5 / 100));
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
@@ -186,6 +206,14 @@ async function run() {
         console.error(error);
         res.status(500).send({ message: "Internal server error" });
       }
+    });
+
+    // get paymentHistory by specifiq user
+    app.get("/paymentHistory/:number", async (req, res) => {
+      const number = req.params.number;
+      const query = { From : number };
+      const result = await paymentHistory.find(query).toArray();
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection

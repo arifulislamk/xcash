@@ -29,8 +29,9 @@ const UserMenu = () => {
     const amount = e.target.amount.value;
     const pin = e.target.pin.value;
     console.log(number, amount, pin);
-
-    if (amount <= userinfo?.balance && pin === userinfo?.pin) {
+    if (amount > 100 && 105 > userinfo.balance)
+      return toast.error("not enough balance with fee");
+    if (amount <= userinfo?.balance && pin === userinfo?.pin && amount > 49) {
       const { data } = await commonAxios.patch(`/transfer/${number}`, {
         amount: amount,
         userNumber: userinfo?.number,
@@ -49,6 +50,9 @@ const UserMenu = () => {
       if (amount > userinfo?.balance) {
         toast.error("Insufficient balance ");
       }
+      if (amount < 50) {
+        toast.error("Transaction amount should be greater than 49 ");
+      }
       if (pin !== userinfo?.pin) {
         toast.error("pin not matching ");
       }
@@ -62,8 +66,9 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const pin = e.target.pin.value;
 
-    console.log(number, amount, pin);
-
+    console.log(number, amount, pin , (parseFloat(amount*(1.5/100))) + parseFloat(amount));
+    if ( (parseFloat(amount*(1.5/100))) + parseFloat(amount) > userinfo.balance)
+      return toast.error("not enough balance with fee");
     if (amount <= userinfo?.balance && pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/cashouttransfer/${number}`, {
         amount: amount,
@@ -72,9 +77,12 @@ const UserMenu = () => {
       console.log(data);
       if (data.modifiedCount) {
         toast.success("Cash Out successfully");
-        const { data } = await commonAxios.patch(`/cashoutminus/${userinfo?.number}`, {
-          amount: amount,
-        });
+        const { data } = await commonAxios.patch(
+          `/cashoutminus/${userinfo?.number}`,
+          {
+            amount: amount,
+          }
+        );
         console.log(data);
         setcashOut(false);
       }
@@ -89,6 +97,15 @@ const UserMenu = () => {
     }
   };
 
+  // payment history.get
+  const { data: paymentHistory } = useQuery({
+    queryKey: ["paymentHistory", !!userinfo?.number],
+    queryFn: async () => {
+      const { data } = await commonAxios(`/paymenthistory/${userinfo?.number}`);
+      return data;
+    },
+  });
+  console.log(paymentHistory);
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
@@ -262,7 +279,31 @@ const UserMenu = () => {
           <h2 className=" text-center font-bold text-xl ">
             Transection History
           </h2>
-          <div className=" flex flex-col justify-center items-center "></div>
+          <div>
+            <div className="overflow-x-auto">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>Tran. Type</th>
+                    <th>Number</th>
+                    <th>Amount</th>
+                    <th>Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentHistory?.map((payment, index) => (
+                    <tr key={index}>
+                      <td>{payment.Type}</td>
+                      <td>{payment.To}</td>
+                      <td>{payment.amount}</td>
+                      <td>{payment.fee}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
