@@ -3,12 +3,14 @@ import useCommonAxios from "../../hooks/useCommonAxios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import UpdateUserModal from "../../components/UpdateUserModal";
+import useSecureAxios from "../../hooks/useSecureAxios";
 
 const AllUser = () => {
     const reloadPage = () => {
         window.location.reload();
       };
   const commonAxios = useCommonAxios();
+  const secureAxios = useSecureAxios()
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState();
 
@@ -16,7 +18,7 @@ const AllUser = () => {
   const { data: alluser = [], isLoading } = useQuery({
     queryKey: "allUsers",
     queryFn: async () => {
-      return commonAxios("/allusers");
+      return secureAxios("/allusers");
     },
     onSuccess: () => {
       // console.log(" Succesful");
@@ -37,7 +39,7 @@ const AllUser = () => {
     if(selected === 'agent') updatedRole.balance = 10000 ;
     console.log(updatedRole);
     try {
-      const { data } = await commonAxios
+      const { data } = await secureAxios
         .patch(`/alluser/${email}`, updatedRole)
         // console.log(data)
 

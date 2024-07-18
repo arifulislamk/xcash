@@ -91,7 +91,7 @@ async function run() {
       res.json({ message: 'This is a protected route' });
     });
     
-    app.get("/allusers", async (req, res) => {
+    app.get("/allusers", authenticateJWT, async (req, res) => {
       const result = await allUserData.find().toArray();
       res.send(result);
     });
@@ -104,7 +104,7 @@ async function run() {
     });
 
     // update user a role by admin
-    app.patch("/alluser/:email", async (req, res) => {
+    app.patch("/alluser/:email", authenticateJWT, async (req, res) => {
       const email = req.params.email;
       const query = { email };
       const user = req.body;
@@ -257,7 +257,7 @@ async function run() {
     });
 
     // get all paymentHistory for admin
-    app.get("/paymentHistory", async (req, res) => {
+    app.get("/paymentHistory",authenticateJWT, async (req, res) => {
       const result = await paymentHistory.find().toArray();
       res.send(result);
     });

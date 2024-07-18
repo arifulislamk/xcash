@@ -2,17 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 import useCommonAxios from "../../hooks/useCommonAxios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import useSecureAxios from "../../hooks/useSecureAxios";
 
 const AgentMenu = () => {
   const email = localStorage.getItem("email");
   const [TransectionHistory, setTransectionHistory] = useState(false);
   // console.log(email)
   const commonAxios = useCommonAxios();
+  const secureAxios = useSecureAxios()
 
   const { data: userinfo, isLoading } = useQuery({
     queryKey: ["userInfo", !!email],
     queryFn: async () => {
-      const { data } = await commonAxios(`/user/${email}`);
+      const { data } = await secureAxios(`/user/${email}`);
       return data;
     },
   });
@@ -22,7 +24,7 @@ const AgentMenu = () => {
   const { data: paymentHistory } = useQuery({
     queryKey: ["paymentHistory", !!userinfo?.number],
     queryFn: async () => {
-      const { data } = await commonAxios(`/paymenthistory/${userinfo?.number}`);
+      const { data } = await secureAxios(`/paymenthistory/${userinfo?.number}`);
       return data;
     },
   });
