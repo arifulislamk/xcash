@@ -208,10 +208,17 @@ async function run() {
       }
     });
 
+    // get all paymentHistory for admin 
+    app.get("/paymentHistory", async (req, res) => {
+      const result = await paymentHistory.find().toArray();
+      res.send(result);
+    });
     // get paymentHistory by specifiq user
     app.get("/paymentHistory/:number", async (req, res) => {
       const number = req.params.number;
-      const query = { From : number };
+      const query = {
+        $or: [{ From: number }, { To: number }],
+      };
       const result = await paymentHistory.find(query).toArray();
       res.send(result);
     });

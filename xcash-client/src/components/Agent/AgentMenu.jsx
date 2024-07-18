@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import useCommonAxios from "../../hooks/useCommonAxios";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const AgentMenu = () => {
   const email = localStorage.getItem("email");
+  const [TransectionHistory, setTransectionHistory] = useState(false);
   // console.log(email)
   const commonAxios = useCommonAxios();
 
@@ -14,6 +17,16 @@ const AgentMenu = () => {
     },
   });
   // console.log(userinfo)
+
+  // payment history.get
+  const { data: paymentHistory } = useQuery({
+    queryKey: ["paymentHistory", !!userinfo?.number],
+    queryFn: async () => {
+      const { data } = await commonAxios(`/paymenthistory/${userinfo?.number}`);
+      return data;
+    },
+  });
+  console.log(paymentHistory);
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
@@ -28,21 +41,65 @@ const AgentMenu = () => {
           <p>Balance: {userinfo?.balance}</p>
         </div>
       </div>
-      <div className=" text-center grid grid-cols-2 justify-center items-center gap-4 p-4">
-        <div className="bg-green-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
-          <h4 className=" font-bold text-white text-xl p-3">
-            Transaction Managements
-          </h4>
+
+      {/* TransectionHistory  */}
+      {TransectionHistory && (
+        <div>
+          <div className=" p-3">
+            <button
+              onClick={() => setTransectionHistory(!TransectionHistory)}
+              className="btn text-left"
+            >
+              back
+            </button>
+          </div>
+          <h2 className=" text-center font-bold text-xl ">
+            Transection History
+          </h2>
+          <div>
+            <div className="overflow-x-auto">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>Tran. Type</th>
+                    <th>Number</th>
+                    <th>Amount</th>
+                    <th>Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentHistory?.map((payment, index) => (
+                    <tr key={index}>
+                      <td>{payment.Type}</td>
+                      <td>{payment.From}</td>
+                      <td>{payment.amount}</td>
+                      <td>{payment.fee}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div className="bg-gray-300 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
-          <h4 className=" font-bold text-green-500 text-xl p-3">Balance</h4>
+      )}
+
+      {!TransectionHistory && (
+        <div className=" text-center grid grid-cols-2 justify-center items-center gap-4 p-4">
+          <div className="bg-green-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
+            <h4 className=" font-bold text-white text-xl p-3">
+              Transaction Managements
+            </h4>
+          </div>
+          <Link onClick={() => setTransectionHistory(!TransectionHistory)}>
+            <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
+              <h4 className=" font-bold text-white text-xl p-3">
+                Transaction History
+              </h4>
+            </div>
+          </Link>
         </div>
-        <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
-          <h4 className=" font-bold text-white text-xl p-3">
-            Transaction History
-          </h4>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
