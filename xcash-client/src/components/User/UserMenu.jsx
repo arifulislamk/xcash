@@ -32,6 +32,7 @@ const UserMenu = () => {
     if (amount <= userinfo?.balance && pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/transfer/${number}`, {
         amount: amount,
+        userNumber: userinfo?.number,
       });
       console.log(data);
       if (data.modifiedCount) {
@@ -42,7 +43,7 @@ const UserMenu = () => {
         console.log(data);
         setsendmoney(false);
       }
-      window.location.reload();
+      // window.location.reload();
     } else {
       if (amount > userinfo?.balance) {
         toast.error("Insufficient balance ");

@@ -6,7 +6,16 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
+    credentials: true,
+    optionSuccessStatus: 200,
+  })
+);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zwicj3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -25,6 +34,7 @@ async function run() {
     // await client.connect();
 
     const allUserData = client.db("xcash").collection("allUser");
+    const paymentHistory = client.db("xcash").collection("payments");
     // users collection
     app.post("/adduser", async (req, res) => {
       const info = req.body;
@@ -62,14 +72,15 @@ async function run() {
     app.patch("/transfer/:number", async (req, res) => {
       const userType = "user";
       const number = req.params.number;
-      const query = { number , userType};
+      const query = { number, userType };
       const amount = parseFloat(req.body.amount);
+      const userNumber = req.body.userNumber ;
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
 
         if (!user) {
-          console.log('No user')
+          console.log("No user");
           return res.status(404).send({ message: "User not found" });
         }
         // Calculate the new balance
@@ -81,14 +92,14 @@ async function run() {
           },
         };
         const result = await allUserData.updateOne(query, updateDoc);
-
+        const postpayments = await paymentHistory.insertOne({To: number ,amount: amount , From:userNumber , Type : 'sendmoney' })
         res.send(result);
       } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Internal server error" });
       }
     });
-    // sendmoney and minus balance 
+    // sendmoney and minus balance
     app.patch("/minus/:number", async (req, res) => {
       const number = req.params.number;
       const query = { number };
@@ -109,7 +120,7 @@ async function run() {
           },
         };
         const result = await allUserData.updateOne(query, updateDoc);
-        
+
         res.send(result);
       } catch (error) {
         console.error(error);
