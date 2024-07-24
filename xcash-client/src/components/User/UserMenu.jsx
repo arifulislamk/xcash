@@ -11,7 +11,7 @@ const UserMenu = () => {
   const [cashOut, setcashOut] = useState(false);
   const [cashIn, setcashIn] = useState(false);
   const [TransectionHistory, setTransectionHistory] = useState(false);
-  console.log(email)
+  console.log(email);
   const commonAxios = useCommonAxios();
   const secureAxios = useSecureAxios();
 
@@ -22,7 +22,7 @@ const UserMenu = () => {
       return data;
     },
   });
-  console.log(userinfo)
+  console.log(userinfo);
 
   // sendmoney handle
   const handleSendMoney = async (e) => {
@@ -38,13 +38,13 @@ const UserMenu = () => {
         amount: amount,
         userNumber: userinfo?.number,
       });
-      console.log(data);
+      // console.log(data);
       if (data.modifiedCount) {
         toast.success("Money sent successfully");
         const { data } = await commonAxios.patch(`/minus/${userinfo?.number}`, {
           amount: amount,
         });
-        console.log(data);
+        // console.log(data);
         setsendmoney(false);
       }
       // window.location.reload();
@@ -68,15 +68,23 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const pin = e.target.pin.value;
 
-    console.log(number, amount, pin , (parseFloat(amount*(1.5/100))) + parseFloat(amount));
-    if ( (parseFloat(amount*(1.5/100))) + parseFloat(amount) > userinfo.balance)
+    console.log(
+      number,
+      amount,
+      pin,
+      parseFloat(amount * (1.5 / 100)) + parseFloat(amount)
+    );
+    if (
+      parseFloat(amount * (1.5 / 100)) + parseFloat(amount) >
+      userinfo.balance
+    )
       return toast.error("not enough balance with fee");
     if (amount <= userinfo?.balance && pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/cashouttransfer/${number}`, {
         amount: amount,
         userNumber: userinfo?.number,
       });
-      console.log(data);
+      // console.log(data);
       if (data.modifiedCount) {
         toast.success("Cash Out successfully");
         const { data } = await commonAxios.patch(
@@ -85,7 +93,7 @@ const UserMenu = () => {
             amount: amount,
           }
         );
-        console.log(data);
+        // console.log(data);
         setcashOut(false);
       }
       // window.location.reload();
@@ -95,6 +103,34 @@ const UserMenu = () => {
       }
       if (pin !== userinfo?.pin) {
         toast.error("pin not matching ");
+      }
+    }
+  };
+
+  // cashIn handle
+  const handleCashIn = async (e) => {
+    e.preventDefault();
+    const amount = e.target.amount.value;
+    const number = e.target.number.value;
+    const pin = e.target.pin.value;
+    console.log(amount, pin, number);
+    if (pin === userinfo?.pin) {
+      const { data } = await commonAxios.patch(`/cashin/${userinfo?.email}`, {
+        requestagent : amount,
+      });
+      console.log(data);
+      // if (data.modifiedCount) {
+      //   toast.success("Money added successfully");
+      //   const { data } = await commonAxios.patch(`/plus/${userinfo?.number}`, {
+      //     amount: amount,
+      //   });
+      //   console.log(data);
+      //   setcashIn(false);
+      // }
+      // // window.location.reload();
+    } else {
+      if (amount > userinfo?.balance) {
+        toast.error("Insufficient balance ");
       }
     }
   };
@@ -231,11 +267,7 @@ const UserMenu = () => {
           </div>
           <h2 className=" text-center font-bold text-xl ">Cash In</h2>
           <div className=" flex flex-col justify-center items-center ">
-            <form
-              onSubmit={handleSendMoney}
-              className="space-y-5 mt-4"
-              action=""
-            >
+            <form onSubmit={handleCashIn} className="space-y-5 mt-4" action="">
               <div>
                 <input
                   name="number"

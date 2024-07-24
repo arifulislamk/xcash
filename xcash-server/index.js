@@ -23,12 +23,11 @@ app.use(
   })
 );
 
-
 const authenticateJWT = (req, res, next) => {
-  const token = req.header('Authorization').split(' ')[1];
-  console.log(token , 'token pai');
+  const token = req.header("Authorization").split(" ")[1];
+  console.log(token, "token pai");
   if (!token) {
-    return res.status(401).json({ message: 'Access denied' });
+    return res.status(401).json({ message: "Access denied" });
   }
 
   try {
@@ -36,10 +35,9 @@ const authenticateJWT = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(400).json({ message: 'Invalid token' });
+    res.status(400).json({ message: "Invalid token" });
   }
 };
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zwicj3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -71,11 +69,11 @@ async function run() {
     app.post("/login", async (req, res) => {
       const { emailornumber, pin } = req.body;
       const query = {
-        $or: [{ email: emailornumber }, { number : emailornumber }],
+        $or: [{ email: emailornumber }, { number: emailornumber }],
       };
-      const user = await allUserData.findOne(query)
-      console.log(emailornumber, pin , user)
-      console.log(user, 'paichi');
+      const user = await allUserData.findOne(query);
+      console.log(emailornumber, pin, user);
+      console.log(user, "paichi");
       if (!user) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
@@ -83,20 +81,22 @@ async function run() {
       if (!isPasswordValid) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
-      const token = jwt.sign({ emailornumber }, process.env.SECRET_KEY, { expiresIn: "365day" });
-      res.json({ token ,userType: user?.userType , email: user?.email });
+      const token = jwt.sign({ emailornumber }, process.env.SECRET_KEY, {
+        expiresIn: "365day",
+      });
+      res.json({ token, userType: user?.userType, email: user?.email });
     });
 
-    app.get('/protected', authenticateJWT, (req, res) => {
-      res.json({ message: 'This is a protected route' });
+    app.get("/protected", authenticateJWT, (req, res) => {
+      res.json({ message: "This is a protected route" });
     });
-    
+
     app.get("/allusers", authenticateJWT, async (req, res) => {
       const result = await allUserData.find().toArray();
       res.send(result);
     });
 
-    app.get("/user/:email",authenticateJWT, async (req, res) => {
+    app.get("/user/:email", authenticateJWT, async (req, res) => {
       const email = req.params.email;
       // console.log(email ,'d')
       const result = await allUserData.findOne({ email });
@@ -256,8 +256,21 @@ async function run() {
       }
     });
 
+    //CashIn request to agent
+    app.patch("/cashin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = req.body;
+      const updateDoc = {
+        $set: {
+          ...user,
+        },
+      };
+      const result = await allUserData.updateOne(query, updateDoc);
+      res.send(result);
+    });
     // get all paymentHistory for admin
-    app.get("/paymentHistory",authenticateJWT, async (req, res) => {
+    app.get("/paymentHistory", authenticateJWT, async (req, res) => {
       const result = await paymentHistory.find().toArray();
       res.send(result);
     });
