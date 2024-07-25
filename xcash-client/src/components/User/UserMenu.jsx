@@ -156,7 +156,7 @@ const UserMenu = () => {
         </div>
         <div className=" flex justify-between">
           <p>status : {userinfo?.status} </p>{" "}
-          <p>Balance: {userinfo?.balance}</p>
+          <p className=" text-green-500 font-bold">Balance: {userinfo?.balance}</p>
         </div>
       </div>
       {/* sendmoney ul  */}
