@@ -22,7 +22,7 @@ const UserMenu = () => {
       return data;
     },
   });
-  console.log(userinfo);
+  // console.log(userinfo);
 
   // sendmoney handle
   const handleSendMoney = async (e) => {
@@ -122,7 +122,7 @@ const UserMenu = () => {
       console.log(data);
       if (data.modifiedCount >= 0) {
         toast.success("Money Requested successfully");
-        console.log(data);
+        // console.log(data);
         setcashIn(false);
       }
       // window.location.reload();
@@ -144,7 +144,7 @@ const UserMenu = () => {
       return data;
     },
   });
-  console.log(paymentHistory);
+  // console.log(paymentHistory);
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>

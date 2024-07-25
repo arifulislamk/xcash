@@ -3,6 +3,7 @@ import { useState } from "react";
 import useSecureAxios from "../../hooks/useSecureAxios";
 import { useQuery } from "@tanstack/react-query";
 import UpdateUserModal from "../UpdateUserModal";
+import { toast } from "react-toastify";
 
 const AdminMenu = () => {
   const email = localStorage.getItem("email");
@@ -84,8 +85,7 @@ const AdminMenu = () => {
           <p className="font-medium">Role: Admin</p>
         </div>
         <div className=" flex justify-between">
-          <p>status : {userinfo?.status} </p>{" "}
-          <p>Balance: {userinfo?.balance}</p>
+          <p>status : {userinfo?.status} </p>
         </div>
       </div>
 
