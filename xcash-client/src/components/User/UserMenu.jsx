@@ -114,23 +114,24 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const pin = e.target.pin.value;
     console.log(amount, pin, number);
-    if (pin === userinfo?.pin) {
+    if (pin === userinfo?.pin ) {
       const { data } = await commonAxios.patch(`/cashin/${userinfo?.email}`, {
-        requestagent : amount,
+        requestamount : amount,
+        requestnumber : number,
       });
       console.log(data);
-      // if (data.modifiedCount) {
-      //   toast.success("Money added successfully");
-      //   const { data } = await commonAxios.patch(`/plus/${userinfo?.number}`, {
-      //     amount: amount,
-      //   });
-      //   console.log(data);
-      //   setcashIn(false);
-      // }
-      // // window.location.reload();
+      if (data.modifiedCount >= 0) {
+        toast.success("Money Requested successfully");
+        console.log(data);
+        setcashIn(false);
+      }
+      // window.location.reload();
     } else {
-      if (amount > userinfo?.balance) {
-        toast.error("Insufficient balance ");
+      if (amount === 0) {
+        toast.error("low balace requested");
+      }
+      if (pin !== userinfo?.pin) {
+        toast.error("pin not matching ");
       }
     }
   };

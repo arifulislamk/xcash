@@ -150,7 +150,7 @@ const AdminMenu = () => {
                 {/* head */}
                 <thead>
                   <tr className=" bg-gray-400 ">
-                    <th className="font-bold text-xl">Name</th>
+                    <th className="font-bold">Name</th>
                     <th className=" font-bold">UserType</th>
                     <th className=" font-bold">Status</th>
                     <th className="font-bold">Confirm/update Role</th>
