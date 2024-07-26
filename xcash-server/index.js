@@ -25,7 +25,7 @@ app.use(
 
 const authenticateJWT = (req, res, next) => {
   const token = req.header("Authorization").split(" ")[1];
-  console.log(token, "token pai");
+  // console.log(token, "token pai");
   if (!token) {
     return res.status(401).json({ message: "Access denied" });
   }
@@ -73,8 +73,8 @@ async function run() {
         $or: [{ email: emailornumber }, { number: emailornumber }],
       };
       const user = await allUserData.findOne(query);
-      console.log(emailornumber, pin, user);
-      console.log(user, "paichi");
+      // console.log(emailornumber, pin, user);
+      // console.log(user, "paichi");
       if (!user) {
         return res.status(400).json({ message: "Invalid credentials" });
       }
@@ -196,7 +196,7 @@ async function run() {
       const amount =
         parseFloat(req.body.amount) + parseFloat(req.body.amount * (1.5 / 100));
       const userNumber = req.body.userNumber;
-      console.log(parseFloat(req.body.amount * (1.5 / 100)));
+      // console.log(parseFloat(req.body.amount * (1.5 / 100)));
       try {
         // Retrieve the current user data
         const user = await allUserData.findOne(query);
@@ -285,6 +285,13 @@ async function run() {
       res.send(result);
     });
 
+    // get cashIn requested users 
+    app.get("/requestedusers/:number", async (req, res) => {
+      const number = req.params.number;
+      const query = { requestnumber: number };
+      const result = await allUserData.find(query).toArray();
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(

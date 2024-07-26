@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import useCommonAxios from "../../hooks/useCommonAxios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useSecureAxios from "../../hooks/useSecureAxios";
@@ -7,9 +6,9 @@ import useSecureAxios from "../../hooks/useSecureAxios";
 const AgentMenu = () => {
   const email = localStorage.getItem("email");
   const [TransectionHistory, setTransectionHistory] = useState(false);
+  const [TransectionManagement, setTransectionManagement] = useState(false);
   // console.log(email)
-  const commonAxios = useCommonAxios();
-  const secureAxios = useSecureAxios()
+  const secureAxios = useSecureAxios();
 
   const { data: userinfo, isLoading } = useQuery({
     queryKey: ["userInfo", !!email],
@@ -20,7 +19,7 @@ const AgentMenu = () => {
   });
   // console.log(userinfo)
 
-  // payment history.get
+  // payment history get
   const { data: paymentHistory } = useQuery({
     queryKey: ["paymentHistory", !!userinfo?.number],
     queryFn: async () => {
@@ -29,6 +28,16 @@ const AgentMenu = () => {
     },
   });
   console.log(paymentHistory);
+
+  //Transection Manegement 
+  const { data: requestedusers } = useQuery ( {
+    queryKey: ["requestedusers", !!userinfo?.number],
+    queryFn: async () => {
+      const { data } = await secureAxios(`/requestedusers/${userinfo?.number}`);
+      return data;
+    },
+  })
+  console.log(requestedusers, 'requestedusers re paichi',requestedusers?.requestamount)
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
@@ -44,6 +53,47 @@ const AgentMenu = () => {
         </div>
       </div>
 
+      {/* TransectionManagement  */}
+      {TransectionManagement && requestedusers && (
+        <div>
+          <div className=" p-3">
+            <button
+              onClick={() => setTransectionManagement(!TransectionManagement)}
+              className="btn text-left"
+            >
+              back
+            </button>
+          </div>
+          <h2 className=" text-center font-bold text-xl ">
+            Cash In Request
+          </h2>
+          <div>
+            <div className="overflow-x-auto">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Number</th>
+                    <th>Amount</th>
+                    <th>Confirm</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {requestedusers?.map((requesteduser, index) => (
+                    <tr key={index}>
+                      <td>{requesteduser?.email}</td>
+                      <td>{requesteduser?.number}</td>
+                      <td>{requesteduser?.requestamount}</td>
+                      <td>confrm</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
       {/* TransectionHistory  */}
       {TransectionHistory && (
         <div>
@@ -86,13 +136,17 @@ const AgentMenu = () => {
         </div>
       )}
 
-      {!TransectionHistory && (
+      {!TransectionHistory && !TransectionManagement && (
         <div className=" text-center grid grid-cols-2 justify-center items-center gap-4 p-4">
-          <div className="bg-green-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
-            <h4 className=" font-bold text-white text-xl p-3">
-              Transaction Managements
-            </h4>
-          </div>
+          <Link
+            onClick={() => setTransectionManagement(!TransectionManagement)}
+          >
+            <div className="bg-green-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
+              <h4 className=" font-bold text-white text-xl p-3">
+                Transaction Managements
+              </h4>
+            </div>
+          </Link>
           <Link onClick={() => setTransectionHistory(!TransectionHistory)}>
             <div className="bg-blue-500 border-2 border-gray-600 flex justify-center items-center rounded-md w-36 h-24 ">
               <h4 className=" font-bold text-white text-xl p-3">
