@@ -19,7 +19,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userType", data.userType);
         localStorage.setItem("email", data.email);
-        alert("Login successful");
+        // alert("Login successful");
         reloadPage()
       } else {
         alert(data.message);
@@ -30,7 +30,7 @@ const Login = () => {
   };
   return (
     <div>
-      <div className="hero bg-base-200 min-h-screen">
+      <div className="hero bg-base-200 min-h-screen min-w-fit ">
         <div className="hero-content flex-col">
           <div className="text-center lg:text-left">
             <h1 className="text-3xl font-bold text-center">Login</h1>

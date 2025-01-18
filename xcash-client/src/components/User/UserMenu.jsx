@@ -22,7 +22,7 @@ const UserMenu = () => {
       return data;
     },
   });
-  // console.log(userinfo);
+  console.log(userinfo);
 //ihh
   // sendmoney handle
   const handleSendMoney = async (e) => {
@@ -148,15 +148,15 @@ const UserMenu = () => {
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
-      <div className=" p-4">
+      <div className=" p-4 bg-slate-300 rounded-b-2xl font-medium ">
         <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
         <div className=" flex justify-between mb-3">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>
           <p className="font-medium">Role: User</p>
         </div>
         <div className=" flex justify-between">
-          <p>status : {userinfo?.status} </p>{" "}
-          <p className=" text-green-500 font-bold">Balance: {userinfo?.balance}</p>
+          <p>Status : {userinfo?.status} </p>{" "}
+          <p className=" text-green-600 font-bold">Balance: {userinfo?.balance}</p>
         </div>
       </div>
       {/* sendmoney ul  */}
@@ -170,7 +170,7 @@ const UserMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl ">Send Money</h2>
+          <h2 className=" text-center font-bold text-xl font-roboto ">Send Money</h2>
           <div className=" flex flex-col justify-center items-center ">
             <form
               onSubmit={handleSendMoney}

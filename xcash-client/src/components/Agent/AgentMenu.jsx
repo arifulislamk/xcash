@@ -41,7 +41,7 @@ const AgentMenu = () => {
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
-      <div className=" p-4">
+      <div className=" p-4  bg-slate-300 rounded-b-2xl font-medium">
         <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
         <div className=" flex justify-between mb-3">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>

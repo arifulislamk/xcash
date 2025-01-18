@@ -14,9 +14,9 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
+      "https://xcash.netlify.app",
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://xcash.netlify.app",
     ],
     credentials: true,
     optionSuccessStatus: 200,
