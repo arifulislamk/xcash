@@ -23,7 +23,7 @@ const UserMenu = () => {
     },
   });
   console.log(userinfo);
-//ihh
+  //ihh
   // sendmoney handle
   const handleSendMoney = async (e) => {
     e.preventDefault();
@@ -114,10 +114,10 @@ const UserMenu = () => {
     const number = e.target.number.value;
     const pin = e.target.pin.value;
     console.log(amount, pin, number);
-    if (pin === userinfo?.pin ) {
+    if (pin === userinfo?.pin) {
       const { data } = await commonAxios.patch(`/cashin/${userinfo?.email}`, {
-        requestamount : amount,
-        requestnumber : number,
+        requestamount: amount,
+        requestnumber: number,
       });
       console.log(data);
       if (data.modifiedCount >= 0) {
@@ -148,7 +148,7 @@ const UserMenu = () => {
   if (isLoading) return <p>loadingg</p>;
   return (
     <div>
-      <div className=" p-4 bg-slate-300 rounded-b-2xl font-medium ">
+      <div className=" p-4 bg-cyan-200 text-lime-900 rounded-b-2xl font-bold ">
         <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
         <div className=" flex justify-between mb-3">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>
@@ -156,7 +156,9 @@ const UserMenu = () => {
         </div>
         <div className=" flex justify-between">
           <p>Status : {userinfo?.status} </p>{" "}
-          <p className=" text-green-600 font-bold">Balance: {userinfo?.balance}</p>
+          <p className=" text-green-600 font-bold">
+            Balance: {userinfo?.balance}
+          </p>
         </div>
       </div>
       {/* sendmoney ul  */}
@@ -170,7 +172,9 @@ const UserMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl font-roboto ">Send Money</h2>
+          <h2 className=" text-center text-lime-900 font-extrabold text-2xl font-roboto ">
+            Send Money
+          </h2>
           <div className=" flex flex-col justify-center items-center ">
             <form
               onSubmit={handleSendMoney}
@@ -202,7 +206,7 @@ const UserMenu = () => {
                 />
               </div>
               <div className="form-control mt-6">
-                <button className="btn bg-green-400">Send</button>
+                <button className="btn hover:bg-cyan-300 text-lime-100 hover:text-lime-900 bg-lime-600 rounded-b-2xl font-extrabold">Send</button>
               </div>
             </form>
           </div>
@@ -220,7 +224,7 @@ const UserMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl ">Cash Out</h2>
+          <h2 className=" text-center text-lime-900 font-extrabold text-2xl ">Cash Out</h2>
           <div className=" flex flex-col justify-center items-center ">
             <form onSubmit={handleCashOut} className="space-y-5 mt-4" action="">
               <div>
@@ -248,7 +252,7 @@ const UserMenu = () => {
                 />
               </div>
               <div className="form-control mt-6">
-                <button className="btn bg-green-400">Send</button>
+                <button className="btn hover:bg-cyan-300 text-lime-100 hover:text-lime-900 bg-lime-600 rounded-b-2xl font-extrabold">Cash Out</button>
               </div>
             </form>
           </div>
@@ -266,7 +270,9 @@ const UserMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl ">Cash In</h2>
+          <h2 className=" text-center text-lime-900 font-extrabold text-2xl ">
+            Request Money{/* change only UI name Cash In to request money  */}
+          </h2>
           <div className=" flex flex-col justify-center items-center ">
             <form onSubmit={handleCashIn} className="space-y-5 mt-4" action="">
               <div>
@@ -294,7 +300,7 @@ const UserMenu = () => {
                 />
               </div>
               <div className="form-control mt-6">
-                <button className="btn bg-green-400">Send</button>
+                <button className="btn hover:bg-cyan-300 text-lime-100 hover:text-lime-900 bg-lime-600 rounded-b-2xl font-extrabold">Request</button>
               </div>
             </form>
           </div>
@@ -356,7 +362,10 @@ const UserMenu = () => {
           </Link>
           <Link onClick={() => setcashIn(!cashIn)}>
             <div className=" border-2 border-gray-600 flex justify-center items-center rounded-md w-32 h-24 bg-green-400">
-              <h4 className=" font-bold text-white text-xl p-3">Cash In</h4>
+              <h4 className=" font-bold text-white text-xl p-3">
+                Request Money
+                {/* change only UI name cashin to request money  */}
+              </h4>{" "}
             </div>
           </Link>
 

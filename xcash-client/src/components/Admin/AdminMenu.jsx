@@ -78,7 +78,7 @@ const AdminMenu = () => {
   };
   return (
     <div>
-      <div className=" p-4  bg-slate-300 rounded-b-2xl font-medium">
+      <div className=" p-4  bg-cyan-200 text-lime-900 rounded-b-2xl font-bold">
         <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
         <div className=" flex justify-between ">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>
