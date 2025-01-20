@@ -7,12 +7,13 @@ import { toast } from "react-toastify";
 
 const AdminMenu = () => {
   const email = localStorage.getItem("email");
+  const userType = localStorage.getItem("userType");
   const [TransectionHistory, setTransectionHistory] = useState(false);
   const [alluser, setAlluser] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [emails, setEmails] = useState();
   // console.log(email)
-  const secureAxios = useSecureAxios() ;
+  const secureAxios = useSecureAxios();
 
   const { data: userinfo, isLoading } = useQuery({
     queryKey: ["userInfo", !!email],
@@ -22,16 +23,16 @@ const AdminMenu = () => {
     },
   });
 
-    // Fetch all users from API using react-query
-    const { data: allusers = [] } = useQuery({
-      queryKey: "allUsers",
-      queryFn: async () => {
-        return secureAxios("/allusers");
-      },
-      onSuccess: () => {
-        // console.log(" Succesful");
-      },
-    });
+  // Fetch all users from API using react-query
+  const { data: allusers = [] } = useQuery({
+    queryKey: "allUsers",
+    queryFn: async () => {
+      return secureAxios("/allusers");
+    },
+    onSuccess: () => {
+      // console.log(" Succesful");
+    },
+  });
   // console.log(userinfo)
 
   // payment history.get
@@ -79,7 +80,37 @@ const AdminMenu = () => {
   return (
     <div>
       <div className=" p-4  bg-cyan-200 text-lime-900 rounded-b-2xl font-bold">
-        <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
+        <div className=" flex justify-between items-center">
+          <h2 className=" text-xl font-medium">Welcome , {userinfo?.name} </h2>
+          {userType && (
+            <div className="z-50 dropdown dropdown-bottom dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className=" flex justify-center items-center  mr-3 gap-3 m-1"
+              >
+                <img
+                  className=" w-12 h-12 rounded-full"
+                  referrerPolicy="no-referrer"
+                  src="https://lh3.googleusercontent.com/a/ACg8ocIlmoRihTQkxhNjLKlJiFp2daOWvC_8mkNELSkmCOLOrDuoXB3L=s96-c"
+                  alt=""
+                />
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li>
+                  <Link to="/">DashBoard</Link>
+                </li>
+                <li>
+                  <Link to="/">DashBoard</Link>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+
         <div className=" flex justify-between ">
           <h3 className=" font-medium">Email: {userinfo?.email}</h3>
           <p className="font-medium">Role: Admin</p>
@@ -141,9 +172,7 @@ const AdminMenu = () => {
               back
             </button>
           </div>
-          <h2 className=" text-center font-bold text-xl ">
-            All Users
-          </h2>
+          <h2 className=" text-center font-bold text-xl ">All Users</h2>
           <div>
             <div className="overflow-x-auto">
               <table className="table">

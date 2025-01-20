@@ -187,6 +187,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="sending number"
                   type="number"
+                  required
                 />
               </div>
               <div>
@@ -195,6 +196,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="amount"
                   name="amount"
+                  required
                 />
               </div>
               <div>
@@ -203,6 +205,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="Pin"
                   type="number"
+                  required
                 />
               </div>
               <div className="form-control mt-6">
@@ -233,6 +236,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="Agent number"
                   type="number"
+                  required
                 />
               </div>
               <div>
@@ -241,6 +245,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="amount"
                   name="amount"
+                  required
                 />
               </div>
               <div>
@@ -249,6 +254,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="Pin"
                   type="number"
+                  required
                 />
               </div>
               <div className="form-control mt-6">
@@ -281,6 +287,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="Agent number"
                   type="number"
+                  required
                 />
               </div>
               <div>
@@ -289,6 +296,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="amount"
                   name="amount"
+                  required
                 />
               </div>
               <div>
@@ -297,6 +305,7 @@ const UserMenu = () => {
                   className="border border-gray-400 p-3 rounded-md"
                   placeholder="Pin"
                   type="number"
+                  required
                 />
               </div>
               <div className="form-control mt-6">
